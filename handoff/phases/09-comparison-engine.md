@@ -1,0 +1,19 @@
+# Phase 09 — Isolated comparison generation
+
+This is the most complex phase. Read contracts and existing harness/runner.py, harness/scenarios.py, ui/sim_thread.py, detector modes and RNG/config usage before editing. Do not implement the comparison screen yet.
+
+Create comparison/scenario.py, worker.py, recorder.py, presets.json and server/comparison.py, or documented equivalents. Run actual CV, AI, Hybrid pipelines sequentially in separate worker processes. Each has independent tracker, camera, config, random state and artifacts. Use fixed simulation timestep and a common immutable precomputed target trajectory plus exogenous disturbance schedule. Sharing a seed alone is insufficient when algorithms consume random numbers differently. Record/check a common scenario schedule hash, initial camera parameters and seed. Ground truth remains evaluation-only.
+
+Each mode controls its own camera, so image sequences may legitimately diverge. Do not force identical images after camera divergence or share one mode's camera trajectory. Stars/occluders/target/time-based disturbances must be defined consistently in world/sensor terms and replayed deterministically. Rendering must remain the existing optical style. Do not reroute tracker input through truth, add prescribed errors, weaken modes, or retrain.
+
+Default presets: Straight, Figure-8, Sinusoidal, initially 20 seconds each. A user chooses one preset and receives three mode recordings; all-motion sweep is optional after one-preset flow works. Presets use identical settings across modes and are clearly described demonstrations. Include a scheduled short observation dropout only when exposed consistently to all modes and recorded. Do not search arbitrary seeds until a desired winner appears. Fix/predeclare settings, retain every evaluated outcome, and state the narrow scope of conclusions.
+
+Store logs/comparisons/<id>/manifest.json, scenario.json, per-mode frame/telemetry artifacts and summaries. Persist source frame indices/sim time, measured/predicted coordinates, camera pointing, GT, state, confidence, pointing and centroid errors, availability/visibility, and pipeline compute times. Include validity counts and loss intervals so low error during rare locks cannot look like good tracking. Reuse requirement evaluator; no fake FPS from unpaced simulation time. A worker measured outside realtime pacing is labelled accordingly; omit unsupported overall realtime checks or run a separately defined paced measurement without pretending replay FPS is processing speed.
+
+Use bounded preview sampling, e.g. 10-15 saved frames/sec, with full metrics at fixed step. Preserve exact sample timestamps. Use existing OpenCV/image writing; choose browser-compatible video only if encoding/decoding is verified. Keep a per-job size bound and explicit cleanup/cancellation of only that job's newly created temporary files. Do not delete prior comparisons.
+
+Job API: create(config), status(id), cancel(id), results(id). Expose progress by mode/frame count; handle worker crash and partial completion. Prevent accidental CPU contention with a running user mission; queue the comparison or require the app's normal pause/finalise flow. Do not kill the user's backend. Worker imports must not launch a web server or live UI.
+
+Tests/test_comparison.py: common schedule hashes; deterministic repeated mode; independent camera trajectories/states; mode execution identity; truth isolation; cancel/crash; missing measurements; artifact bounds; manifest reload. Run the no-leak tests and a short actual three-mode generation.
+
+Acceptance: three genuine independently controlled recordings can be replayed by common simulation time, with traceable measured metrics. Completion does not imply Hybrid won. Report performance and storage costs. Do not proceed to phase 10 with stubbed or fabricated artifacts.

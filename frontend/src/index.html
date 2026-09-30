@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FSOC-PAT | Autonomous Coarse Alignment</title>
+  <link rel="stylesheet" href="/static/css/tokens.css?v=mission_v2">
+  <link rel="stylesheet" href="/static/css/main.css?v=mission_v2">
+  <link rel="stylesheet" href="/static/css/pages.css?v=mission_v2">
+  <link rel="stylesheet" href="/static/css/repair.css?v=repair1">
+  <link rel="stylesheet" href="/static/css/results.css">
+  <link rel="stylesheet" href="/static/css/shell.css">
+  <link rel="stylesheet" href="/static/css/camera-lab.css">
+  <link rel="stylesheet" href="/static/css/comparison.css?v=6">
+  <link rel="stylesheet" href="/static/css/polish.css?v=3">
+  <link rel="stylesheet" href="/static/css/home-observatory.css?v=1">
+</head>
+<body>
+
+  <!-- ==================== FLOATING HOME BUTTON ==================== -->
+  <div id="nav-home-btn" class="nav-home-btn">&#8962; HOME</div>
+
+  <nav id="secondary-navigation" aria-label="Additional tools"><button onclick="app.startCameraLab()">Camera Lab</button><button onclick="app.pages.showPage('reports');app.refreshReportsList()">Reports</button></nav>
+  <!-- ==================== SPLASH SCREEN ==================== -->
+  <div id="page-splash" class="page active">
+
+    <!-- Animated starfield background -->
+    <canvas id="splash-stars" style="
+      position:absolute; top:0; left:0;
+      width:100%; height:100%; z-index:0;
+    "></canvas>
+
+    <!-- Top bar -->
+    <div style="
+      position:relative; z-index:1;
+      display:flex; justify-content:space-between;
+      align-items:center; padding:20px 40px;
+    ">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:32px;height:32px;border:2px solid #00d4ff;
+                    border-radius:50%;display:flex;align-items:center;
+                    justify-content:center">
+          <div style="width:8px;height:8px;background:#00d4ff;
+                      border-radius:50%"></div>
+        </div>
+        <span style="color:#00d4ff;font-size:18px;font-weight:700;
+                     letter-spacing:3px">FSOC-PAT</span>
+      </div>
+      <div style="color:var(--text-secondary);font-size:11px;letter-spacing:2px">
+        TRACK &nbsp;|&nbsp; ALIGN &nbsp;|&nbsp; CONNECT
+        <div style="text-align:right;margin-top:2px">
+          A CLEARER TOMORROW
+        </div>
+      </div>
+    </div>
+
+    <!-- Center content -->
+    <div style="
+      position:relative; z-index:1;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      height:calc(100vh - 120px);
+      text-align:center;
+    ">
+      <!-- Satellite illustration (CSS only) -->
+      <div style="margin-bottom:40px;position:relative">
+        <div style="
+          width:120px;height:120px;border-radius:50%;
+          border:1px solid rgba(0,212,255,0.2);
+          display:flex;align-items:center;justify-content:center;
+          margin:0 auto;
+        ">
+          <div style="
+            width:80px;height:80px;border-radius:50%;
+            border:1px solid rgba(0,212,255,0.4);
+            display:flex;align-items:center;justify-content:center;
+          ">
+            <div style="
+              width:40px;height:40px;border-radius:50%;
+              background:rgba(0,212,255,0.15);
+              border:2px solid #00d4ff;
+              display:flex;align-items:center;justify-content:center;
+            ">
+              <div style="
+                width:12px;height:12px;background:#00d4ff;
+                border-radius:50%;
+                box-shadow:0 0 20px #00d4ff;
+              "></div>
+            </div>
+          </div>
+        </div>
+        <!-- Orbit line -->
+        <div style="
+          position:absolute;top:50%;left:50%;
+          width:200px;height:1px;
+          background:linear-gradient(90deg,transparent,rgba(0,212,255,0.3),transparent);
+          transform:translate(-50%,-50%) rotate(-20deg);
+        "></div>
+      </div>
+
+      <h1 style="
+        font-size:64px;font-weight:800;
+        color:white;letter-spacing:6px;
+        margin:0 0 8px 0;
+        text-shadow:0 0 60px rgba(0,212,255,0.3);
+      ">
+        FSOC<span style="color:#00d4ff">-PAT</span>
+      </h1>
+      <p style="
+        color:var(--text-secondary);font-size:13px;letter-spacing:2px;
+        margin:0 0 60px 0;
+      ">
+        FREE-SPACE OPTICAL COMMUNICATION &mdash; AUTONOMOUS COARSE POINT-AHEAD TRACKING
+      </p>
+
+      <p style="
+        color:#94a3b8;font-size:14px;margin:0 0 32px 0;
+      ">Choose mission type to begin</p>
+
+      <!-- 4 Mission cards -->
+      <div style="
+        display:grid;grid-template-columns:repeat(4,240px);
+        gap:16px;
+      ">
+        <div class="mission-card" id="card-demo" onclick="app.startQuickDemo()">
+          <div class="mission-card-icon">&#9654;</div>
+          <div class="mission-card-title">QUICK DEMO</div>
+          <div class="mission-card-desc">Recommended demonstration</div>
+          <div class="mission-card-arrow">&rarr;</div>
+        </div>
+        <div class="mission-card" id="card-custom" onclick="app.pages.showPage('builder')">
+          <div class="mission-card-icon">&#9881;</div>
+          <div class="mission-card-title">CUSTOM MISSION</div>
+          <div class="mission-card-desc">Define your own scenario</div>
+          <div class="mission-card-arrow">&rarr;</div>
+        </div>
+        <div class="mission-card" id="card-benchmark" onclick="app.pages.showPage('benchmark')">
+          <div class="mission-card-icon">&#128202;</div>
+          <div class="mission-card-title">BENCHMARK</div>
+          <div class="mission-card-desc">Automated evaluation</div>
+          <div class="mission-card-arrow">&rarr;</div>
+        </div>
+        <div class="mission-card" id="card-video" onclick="app.loadVideo()">
+          <div class="mission-card-icon">&#9654;&#65039;</div>
+          <div class="mission-card-title">LOAD VIDEO</div>
+          <div class="mission-card-desc">Test an MP4 recording</div>
+          <div class="mission-card-arrow">&rarr;</div>
+        </div>
+      </div>
+
+      <input type="file" id="video-file-input" accept="video/mp4,.csv" multiple title="Pick the MP4 — optionally together with its ground-truth CSV (frame,x,y)" style="display:none">
+    </div>
+
+    <!-- Bottom bar -->
+    <div style="
+      position:relative;z-index:1;
+      display:flex;justify-content:space-between;
+      align-items:center;padding:16px 40px;
+      border-top:1px solid rgba(30,58,95,0.5);
+    ">
+      <span style="color:var(--text-secondary);font-size:11px">
+        FSOC-PAT v1.0 &nbsp;&middot;&nbsp; Optical Tracking &nbsp;&middot;&nbsp;
+        Autonomous Control &nbsp;&middot;&nbsp; Real World Readiness
+      </span>
+      <span style="color:var(--text-secondary);font-size:11px">
+        PS 26169 &middot; ISRO / SIH 2025
+      </span>
+    </div>
+  </div>
+
+  <!-- ==================== MAIN CONTENT ==================== -->
+  <main id="main-content">
+
+    <!-- ---------- MISSION BUILDER ---------- -->
+    <div id="page-builder" class="page">
+      <div class="page-header">
+        <h2>Mission Builder</h2>
+        <div class="step-indicator">
+          <div class="step active" data-step="1"><span class="step-num">1</span>Build</div>
+          <div class="step-arrow">&rarr;</div>
+          <div class="step" data-step="2"><span class="step-num">2</span>Brief</div>
+          <div class="step-arrow">&rarr;</div>
+          <div class="step" data-step="3"><span class="step-num">3</span>Execute</div>
+          <div class="step-arrow">&rarr;</div>
+          <div class="step" data-step="4"><span class="step-num">4</span>Results</div>
+        </div>
+      </div>
+
+      <div class="builder-body">
+        <section class="builder-section">
+          <h3 class="section-title">Target</h3>
+
+          <div class="field-label">Motion Pattern</div>
+          <div class="option-grid motion-grid">
+            <button class="option-tile" data-motion="Straight"><span class="tile-icon">&#8594;</span>Straight</button>
+            <button class="option-tile" data-motion="Circular"><span class="tile-icon">&#8635;</span>Circular</button>
+            <button class="option-tile" data-motion="Figure-8"><span class="tile-icon">&#8734;</span>Figure-8</button>
+            <button class="option-tile" data-motion="Random"><span class="tile-icon">&#10521;</span>Random</button>
+            <button class="option-tile" data-motion="Spiral"><span class="tile-icon">&#127765;</span>Spiral</button>
+            <button class="option-tile" data-motion="Sinusoidal"><span class="tile-icon">&#12290;</span>Sinusoidal</button>
+          </div>
+
+          <div class="field-label">Speed</div>
+          <div class="option-row" id="speed-row">
+            <button class="option-pill" data-speed="Slow">Slow</button>
+            <button class="option-pill" data-speed="Normal">Normal</button>
+            <button class="option-pill" data-speed="Fast">Fast</button>
+          </div>
+
+          <div class="field-label">Initial Position</div>
+          <div class="option-row" id="position-row">
+            <button class="option-pill" data-position="In Camera View">In Camera View</button>
+            <button class="option-pill" data-position="Near Camera View">Near Camera View</button>
+            <button class="option-pill" data-position="Anywhere">Anywhere</button>
+          </div>
+        </section>
+
+        <section class="builder-section">
+          <h3 class="section-title">Environment</h3>
+          <div class="field-label">Atmosphere</div>
+          <div class="option-grid atmosphere-grid">
+            <button class="option-tile" data-atmosphere="clear"><span class="tile-icon">&#9728;</span>Clear</button>
+            <button class="option-tile" data-atmosphere="haze"><span class="tile-icon">&#127787;</span>Haze</button>
+            <button class="option-tile" data-atmosphere="fog"><span class="tile-icon">&#127787;</span>Fog</button>
+            <button class="option-tile" data-atmosphere="rain"><span class="tile-icon">&#127783;</span>Rain</button>
+            <button class="option-tile" data-atmosphere="low_light"><span class="tile-icon">&#127761;</span>Low Light</button>
+          </div>
+        </section>
+
+        <section class="builder-section">
+          <h3 class="section-title">Disturbances</h3>
+          <div class="field-label">Active Types</div>
+          <div class="option-row" id="disturbance-row">
+            <button class="option-chip" data-disturbance="turbulence">Turbulence</button>
+            <button class="option-chip" data-disturbance="vibration">Vibration</button>
+            <button class="option-chip" data-disturbance="noise">Noise</button>
+            <button class="option-chip" data-disturbance="scintillation">Scintillation</button>
+            <button class="option-chip" data-disturbance="jerk">Jerk</button>
+          </div>
+          <div class="field-label">Intensity <span id="intensity-value">0.3</span></div>
+          <input type="range" id="disturbance-intensity" min="0" max="1" step="0.05" value="0.3" class="slider">
+        </section>
+
+        <section class="builder-section">
+          <h3 class="section-title">Tracking</h3>
+          <div class="field-label">Detector Mode</div>
+          <div class="option-row" id="tracking-row">
+            <button class="option-pill" data-tracking="CV Only">CV Only</button>
+            <button class="option-pill" data-tracking="AI Only">AI Only</button>
+            <button class="option-pill" data-tracking="Hybrid">Hybrid</button>
+          </div>
+        </section>
+      </div>
+
+      <div class="mission-summary-bar">
+        <div id="mission-summary-text">Straight motion &middot; Normal speed &middot; Clear atmosphere &middot; Hybrid tracking</div>
+        <button class="btn btn-primary" id="btn-builder-next">Next: Mission Brief &rarr;</button>
+      </div>
+    </div>
+
+    <!-- ---------- MISSION BRIEF ---------- -->
+    <div id="page-brief" class="page">
+      <div class="page-header"><h2>Mission Brief</h2></div>
+
+      <div class="brief-summary-cards">
+        <div class="card">
+          <h4>Target</h4>
+          <div class="card-row"><span>Motion</span><span id="brief-motion">&mdash;</span></div>
+          <div class="card-row"><span>Speed</span><span id="brief-speed">&mdash;</span></div>
+          <div class="card-row"><span>Position</span><span id="brief-position">&mdash;</span></div>
+        </div>
+        <div class="card">
+          <h4>Environment</h4>
+          <div class="card-row"><span>Atmosphere</span><span id="brief-atmosphere">&mdash;</span></div>
+        </div>
+        <div class="card">
+          <h4>Disturbances</h4>
+          <div class="card-row"><span>Active</span><span id="brief-disturbances">&mdash;</span></div>
+          <div class="card-row"><span>Intensity</span><span id="brief-intensity">&mdash;</span></div>
+        </div>
+        <div class="card">
+          <h4>Tracking</h4>
+          <div class="card-row"><span>Mode</span><span id="brief-tracking">&mdash;</span></div>
+        </div>
+      </div>
+
+      <div class="brief-lower">
+        <div class="card mission-preview-card">
+          <h4>Mission Preview</h4>
+          <svg id="mission-preview-svg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid meet">
+            <rect x="0" y="0" width="400" height="300" fill="#040810"/>
+            <path d="M 40 150 Q 200 40 360 150" stroke="#00d4ff" stroke-dasharray="4 4" fill="none" opacity="0.6"/>
+            <circle cx="200" cy="150" r="30" fill="none" stroke="#1e6a8a" stroke-width="1.5"/>
+            <polygon points="40,150 60,140 60,160" fill="#00d4ff"/>
+            <circle cx="360" cy="150" r="5" fill="#ff4444"/>
+          </svg>
+        </div>
+        <div class="card camera-settings-card">
+          <h4>Camera Settings</h4>
+          <div class="card-row"><span>Resolution</span><span id="brief-camera-resolution">—</span></div>
+          <div class="card-row"><span>HFOV</span><span id="brief-camera-hfov">—</span></div>
+          <div class="card-row"><span>VFOV</span><span id="brief-camera-vfov">—</span></div>
+          <div class="card-row"><span>Update Rate</span><span id="brief-camera-update_rate">—</span></div>
+          <div class="card-row"><span>Max Slew Rate</span><span id="brief-camera-max_slew">—</span></div>
+        </div>
+        <div class="card mission-flow-card">
+          <h4>Expected Mission Flow</h4>
+          <div class="flow-steps">
+            <div class="flow-step"><span class="flow-dot"></span>Acquire</div>
+            <div class="flow-step"><span class="flow-dot"></span>Lock</div>
+            <div class="flow-step"><span class="flow-dot"></span>Track</div>
+            <div class="flow-step"><span class="flow-dot"></span>Adapt</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-start-mission" id="btn-start-mission">&#9654; START MISSION</button>
+    </div>
+
+    <!-- ---------- MISSION CONTROL ---------- -->
+    <div id="page-control" class="page">
+      <!-- Shared Top Bar Component -->
+      <header class="shared-topbar" id="app-topbar">
+        <div class="topbar-left">
+          <div class="topbar-logo" onclick="app.pages.showPage('splash')" title="FSOC-PAT Home">
+            <div class="logo-symbol"></div>
+            <span class="logo-text">FSOC<span>-PAT</span></span>
+          </div>
+          <nav class="topbar-breadcrumb">
+            <span class="bc-link" onclick="app.pages.showPage('splash')">Home</span>
+            <span class="bc-sep">&rsaquo;</span>
+            <span class="bc-link" onclick="app.pages.showPage('builder')">Custom Mission</span>
+            <span class="bc-sep">&rsaquo;</span>
+            <span class="bc-current">Execute</span>
+            <span class="session-badge" id="session-chip">
+              <span id="control-session-id">SIM-20260928</span>
+              <span class="session-info-icon" title="Active mission session identifier">&#9432;</span>
+            </span>
+          </nav>
+        </div>
+
+        <div class="topbar-center">
+          <!-- State pill with glowing dot and time in state -->
+          <div class="state-pill-large state-SEARCHING" id="topbar-state-pill">
+            <span class="state-dot"></span>
+            <span id="topbar-state-label">SEARCHING</span>
+            <span class="state-timer" id="topbar-state-timer">00:00</span>
+          </div>
+
+          <!-- CV / AI / Hybrid detector live switch -->
+          <div class="detector-switch-group" id="control-tracking-row" title="Detector mode — switches live">
+            <button class="detector-btn" data-tracking="CV Only">CV</button>
+            <button class="detector-btn" data-tracking="AI Only">AI</button>
+            <button class="detector-btn active" data-tracking="Hybrid">Hybrid</button>
+          </div>
+
+          <!-- Source badge (SIM / VIDEO) -->
+          <div class="source-badge" id="topbar-source-badge">SIM</div>
+
+          <!-- REC indicator with elapsed mission time -->
+          <button class="rec-badge" id="cam-rec" title="Start / stop camera recording" aria-pressed="false">
+            <span class="rec-dot"></span>
+            <span>REC</span>
+            <span id="topbar-rec-timer">—</span>
+          </button>
+
+          <!-- Back-end latency badge -->
+          <div class="latency-badge" id="topbar-latency-badge" title="Backend processing latency">
+            <span class="latency-dot"></span>
+            <span id="topbar-latency-val">-- ms</span>
+          </div>
+
+          <!-- Real-time clock -->
+          <div class="clock-display" id="topbar-clock">--:--:--</div>
+        </div>
+
+        <div class="topbar-right">
+          <button class="btn btn-ghost btn-sm" id="btn-back-sim" style="display:none">&#8617; Back to simulation</button>
+          <button class="topbar-btn" id="btn-diagnostics" title="Diagnostics Panel (Ctrl+D)">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+            <span>Diagnostics</span>
+            <kbd>Ctrl+D</kbd>
+          </button>
+          <button class="topbar-btn" id="btn-topbar-home" title="Return to Home Screen">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            <span>Home</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Body Area -->
+      <div class="control-main">
+        <!-- Left: Camera View & Minimap -->
+        <div class="control-left">
+          <div class="view-header-row">
+            <div class="view-mode-toggle-group">
+              <button class="view-tab-btn active" id="btn-view-camera" data-view="camera">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                <span>Camera View</span>
+              </button>
+              <button class="view-tab-btn" id="btn-view-world" data-view="world">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                <span>World View</span>
+                <kbd>V</kbd>
+              </button>
+            </div>
+            <div class="view-status-hint" id="view-toggle-info">Camera: 640&times;480px viewport into 2000&times;2000 world</div>
+          </div>
+
+          <div class="viewport-card">
+            <!-- Camera Feed View Container -->
+            <div id="camera-container" class="view-panel view-active">
+              <!-- Sci-fi Corner Brackets -->
+              <div class="viewport-corners">
+                <span class="corner corner-tl"></span>
+                <span class="corner corner-tr"></span>
+                <span class="corner corner-bl"></span>
+                <span class="corner corner-br"></span>
+              </div>
+
+              <!-- Real frame stream from /ws/frame -->
+              <img id="camera-feed" alt="Camera Feed">
+
+              <!-- Real-time HUD canvas overlay (center crosshair, beacon ring, prediction diamond, dashed line) -->
+              <canvas id="camera-hud-canvas" width="640" height="480"></canvas>
+
+              <!-- Top-left status chip: [● LOCKED conf 0.96] -->
+              <div class="cam-chip cam-chip-tl st-SEARCHING" id="cam-state-badge">
+                <span class="chip-dot"></span>
+                <span id="cam-chip-state-text">SEARCHING</span>
+                <span class="chip-conf" id="cam-chip-conf">conf &mdash;</span>
+              </div>
+
+              <!-- Top-right stats chip: 57 FPS · 18 ms -->
+              <div class="cam-chip cam-chip-tr">
+                <span id="cam-fps">-- FPS</span>
+                <span class="cam-sep">&middot;</span>
+                <span id="cam-lat-val">-- ms</span>
+              </div>
+
+              <!-- Bottom-left specification label -->
+              <div class="cam-chip cam-chip-bl" id="cam-fov-info">
+                HFOV 4.0&deg; &middot; VFOV 3.0&deg; &middot; 109 &micro;rad/px
+              </div>
+
+              <!-- Hidden placeholder for backwards compatibility with camera mode badge -->
+              <span id="cam-mode-badge" style="display:none;">SIMULATION</span>
+              <span id="live-badge" style="display:none;"></span>
+              <span id="topbar-mode" style="display:none;">HYBRID</span>
+              <span id="control-scenario-summary" style="display:none;">&mdash;</span>
+
+              <!-- Bottom-right World View Minimap Inset -->
+              <div class="minimap-inset-card" id="minimap-inset" title="World View Minimap (Click to switch to full World View)">
+                <canvas id="minimap-canvas" width="180" height="125"></canvas>
+              </div>
+
+              <!-- Video Done Banner -->
+              <div id="video-done-banner" class="video-done-overlay" style="display:none;">
+                <div class="vdone-title">VIDEO FINISHED &mdash; report ready</div>
+                <div class="vdone-detail" id="video-done-detail">Last frame shown. Playback stopped.</div>
+                <div class="vdone-actions">
+                  <button class="btn btn-primary btn-sm" id="btn-video-export-pdf">Export PDF</button>
+                  <button class="btn btn-ghost btn-sm" id="btn-video-back-sim">Back to simulation</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Full World View Container -->
+            <div id="world-view-container" class="view-panel">
+              <canvas id="world-view"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Telemetry | Environment | Event Log Panel -->
+        <div class="control-right">
+          <!-- Top Tabs -->
+          <div class="panel-tabs-header">
+            <button class="panel-tab-btn active" id="tab-btn-telemetry" data-tab="telemetry">Telemetry</button>
+            <button class="panel-tab-btn" id="tab-btn-environment" data-tab="environment">Environment</button>
+            <button class="panel-tab-btn" id="tab-btn-events" data-tab="events">Event Log</button>
+          </div>
+
+          <!-- Tab 1: Telemetry -->
+          <div class="panel-tab-content active" id="tab-content-telemetry">
+            <!-- Tracking State Card -->
+            <div class="panel-card tracking-state-card">
+              <div class="tsc-left">
+                <div class="tsc-label">TRACKING STATE</div>
+                <div class="tsc-state-val st-SEARCHING" id="rp-state-text">SEARCHING</div>
+                <div class="tsc-timer" id="rp-elapsed">00:00</div>
+                <div id="rp-state-icon" style="display:none;">&#128269;</div>
+              </div>
+              <div class="tsc-divider"></div>
+              <div class="tsc-right">
+                <div class="tsc-metric">
+                  <span class="tsc-k">DETECTOR MODE</span>
+                  <span class="tsc-v" id="tsc-detector-mode">Hybrid</span>
+                </div>
+                <div class="tsc-metric">
+                  <span class="tsc-k">SOURCE</span>
+                  <span class="tsc-v" id="tsc-source">SIM</span>
+                </div>
+                <div class="tsc-metric">
+                  <span class="tsc-k">RESOLUTION</span>
+                  <span class="tsc-v">640 &times; 480</span>
+                </div>
+                <div class="tsc-metric">
+                  <span class="tsc-k">UPDATE RATE</span>
+                  <span class="tsc-v" id="tsc-update-rate">60 Hz</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Key Metrics Card (Exactly the 6 rows per Hard Rule 3) -->
+            <div class="panel-card key-metrics-card">
+              <div class="card-section-title">KEY METRICS</div>
+              <div class="metrics-table">
+                <!-- 1. Tracking error -->
+                <div class="metric-row" id="row-metric-error">
+                  <div class="metric-name-col">
+                    <span>Tracking error</span>
+                    <span class="metric-info-tooltip" title="Current tracking error from frame centre">&#9432;</span>
+                  </div>
+                  <div class="metric-val-col">
+                    <span class="val-primary" id="km-track-err-px">&mdash;</span>
+                    <span class="val-secondary" id="km-track-err-urad">&mdash;</span>
+                    <span id="metric-error" style="display:none;">&mdash;</span>
+                  </div>
+                  <div class="metric-spark-col">
+                    <canvas class="sparkline-canvas" id="spark-track-err" width="60" height="20"></canvas>
+                  </div>
+                  <div class="metric-limit-col">&le; 10 px</div>
+                </div>
+
+                <!-- 2. Acquisition time -->
+                <div class="metric-row" id="row-metric-acq-time">
+                  <div class="metric-name-col">
+                    <span>Acquisition time</span>
+                    <span class="metric-info-tooltip" title="Time from first detection to confirmed LOCKED state">&#9432;</span>
+                  </div>
+                  <div class="metric-val-col">
+                    <span class="val-primary" id="km-acq-time">&mdash;</span>
+                  </div>
+                  <div class="metric-spark-col">
+                    <canvas class="sparkline-canvas" id="spark-acq-time" width="60" height="20"></canvas>
+                  </div>
+                  <div class="metric-limit-col">&le; 2.0 s</div>
+                </div>
+
+                <!-- 3. Target loss -->
+                <div class="metric-row" id="row-metric-target-loss">
+                  <div class="metric-name-col">
+                    <span>Target loss</span>
+                    <span class="metric-info-tooltip" title="Percentage of frames in LOST or COASTING state">&#9432;</span>
+                  </div>
+                  <div class="metric-val-col">
+                    <span class="val-primary" id="km-target-loss">&mdash;</span>
+                  </div>
+                  <div class="metric-spark-col">
+                    <canvas class="sparkline-canvas" id="spark-target-loss" width="60" height="20"></canvas>
+                  </div>
+                  <div class="metric-limit-col">&lt; 5.0 %</div>
+                </div>
+
+                <!-- 4. Re-acquisition time -->
+                <div class="metric-row" id="row-metric-reacq-time">
+                  <div class="metric-name-col">
+                    <span>Re-acquisition time</span>
+                    <span class="metric-info-tooltip" title="Time to re-acquire lock after loss">&#9432;</span>
+                  </div>
+                  <div class="metric-val-col">
+                    <span class="val-primary" id="km-reacq-time">&mdash;</span>
+                  </div>
+                  <div class="metric-spark-col">
+                    <canvas class="sparkline-canvas" id="spark-reacq-time" width="60" height="20"></canvas>
+                  </div>
+                  <div class="metric-limit-col">&le; 1.0 s</div>
+                </div>
+
+                <!-- 5. Processing speed (FPS) -->
+                <div class="metric-row" id="row-metric-fps">
+                  <div class="metric-name-col">
+                    <span>Processing speed (FPS)</span>
+                    <span class="metric-info-tooltip" title="Live simulation throughput">&#9432;</span>
+                  </div>
+                  <div class="metric-val-col">
+                    <span class="val-primary" id="km-fps">&mdash;</span>
+                    <span id="metric-fps" style="display:none;">&mdash;</span>
+                  </div>
+                  <div class="metric-spark-col">
+                    <canvas class="sparkline-canvas" id="spark-fps" width="60" height="20"></canvas>
+                  </div>
+                  <div class="metric-limit-col">&ge; 20</div>
+                </div>
+
+                <!-- 6. Lock retention -->
+                <div class="metric-row" id="row-metric-lock-ret">
+                  <div class="metric-name-col">
+                    <span>Lock retention</span>
+                    <span class="metric-info-tooltip" id="km-lock-ret-label" title="Ground truth correct lock rate or tracker estimate">&#9432;</span>
+                  </div>
+                  <div class="metric-val-col">
+                    <span class="val-primary" id="km-lock-ret">&mdash;</span>
+                    <span class="val-tag" id="km-lock-ret-source">ground truth</span>
+                    <span id="metric-lock-rate" style="display:none;">&mdash;</span>
+                  </div>
+                  <div class="metric-spark-col">
+                    <canvas class="sparkline-canvas" id="spark-lock-ret" width="60" height="20"></canvas>
+                  </div>
+                  <div class="metric-limit-col metric-limit-none">&mdash;</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- DISTURBANCES (Live) Quick Summary Card -->
+            <div class="panel-card disturbances-summary-card">
+              <div class="card-header-with-action">
+                <div class="card-section-title">DISTURBANCES (Live)</div>
+                <button class="btn-text-action" id="btn-edit-disturbances">&#9998; Edit</button>
+              </div>
+              <div class="disturbances-mini-grid" id="disturbances-mini-grid">
+                <div class="dist-mini-row" data-dist-id="gaussian">
+                  <span class="dist-mini-name">Gaussian noise</span>
+                  <span class="dist-mini-val" id="mini-val-gaussian">0.00</span>
+                  <div class="dist-mini-bar"><div class="dist-mini-bar-fill" id="mini-bar-gaussian"></div></div>
+                </div>
+                <div class="dist-mini-row" data-dist-id="scintillation">
+                  <span class="dist-mini-name">Scintillation</span>
+                  <span class="dist-mini-val" id="mini-val-scintillation">0.00</span>
+                  <div class="dist-mini-bar"><div class="dist-mini-bar-fill" id="mini-bar-scintillation"></div></div>
+                </div>
+                <div class="dist-mini-row" data-dist-id="saltpepper">
+                  <span class="dist-mini-name">Salt &amp; pepper</span>
+                  <span class="dist-mini-val" id="mini-val-saltpepper">0.00</span>
+                  <div class="dist-mini-bar"><div class="dist-mini-bar-fill" id="mini-bar-saltpepper"></div></div>
+                </div>
+                <div class="dist-mini-row" data-dist-id="turbulence">
+                  <span class="dist-mini-name">Turbulence</span>
+                  <span class="dist-mini-val" id="mini-val-turbulence">0.00</span>
+                  <div class="dist-mini-bar"><div class="dist-mini-bar-fill" id="mini-bar-turbulence"></div></div>
+                </div>
+                <div class="dist-mini-row" data-dist-id="poisson">
+                  <span class="dist-mini-name">Poisson</span>
+                  <span class="dist-mini-val" id="mini-val-poisson">0.00</span>
+                  <div class="dist-mini-bar"><div class="dist-mini-bar-fill" id="mini-bar-poisson"></div></div>
+                </div>
+                <div class="dist-mini-row" data-dist-id="occlusion">
+                  <span class="dist-mini-name">Occlusion</span>
+                  <span class="dist-mini-val" id="mini-val-occlusion">0.00</span>
+                  <div class="dist-mini-bar"><div class="dist-mini-bar-fill" id="mini-bar-occlusion"></div></div>
+                </div>
+                <div class="dist-mini-row" data-dist-id="jitter">
+                  <span class="dist-mini-name">Jitter</span>
+                  <span class="dist-mini-val" id="mini-val-jitter">0.00</span>
+                  <div class="dist-mini-bar"><div class="dist-mini-bar-fill" id="mini-bar-jitter"></div></div>
+                </div>
+                <div class="dist-mini-row" data-dist-id="decoys">
+                  <span class="dist-mini-name">Decoys</span>
+                  <span class="dist-mini-val" id="mini-val-decoys">0.00</span>
+                  <div class="dist-mini-bar"><div class="dist-mini-bar-fill" id="mini-bar-decoys"></div></div>
+                </div>
+                <div class="dist-mini-row" data-dist-id="low_light">
+                  <span class="dist-mini-name">Low Light</span>
+                  <span class="dist-mini-val" id="mini-val-low_light">0.00</span>
+                  <div class="dist-mini-bar"><div class="dist-mini-bar-fill" id="mini-bar-low_light"></div></div>
+                </div>
+                <div class="dist-mini-row" data-dist-id="platform">
+                  <span class="dist-mini-name">Platform motion</span>
+                  <span class="dist-mini-val" id="mini-val-platform">0.00</span>
+                  <div class="dist-mini-bar"><div class="dist-mini-bar-fill" id="mini-bar-platform"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Hidden compatibility elements to support existing app methods -->
+            <div style="display:none;">
+              <div id="confidence-fill"></div>
+              <span id="metric-position">&mdash;</span>
+              <span id="metric-brightness">&mdash;</span>
+              <div id="row-centroid-gt"><span id="metric-centroid-gt">&mdash;</span></div>
+              <span id="metric-cam-status">&mdash;</span>
+              <div id="row-pan-tilt"><span id="metric-pan-tilt">&mdash;</span></div>
+              <span id="metric-tracking-mode">&mdash;</span>
+            </div>
+          </div>
+
+          <!-- Tab 2: Environment Controls -->
+          <div class="panel-tab-content" id="tab-content-environment">
+            <!-- Atmosphere Section -->
+            <div class="env-section">
+              <div class="env-label">ATMOSPHERE <span class="env-hint">pick one &middot; click active to clear</span></div>
+              <div class="atmosphere-btn-group">
+                <button class="env-btn active" data-live-atm="clear"><span class="btn-indicator"></span>Clear</button>
+                <button class="env-btn" data-live-atm="haze"><span class="btn-indicator"></span>Haze</button>
+                <button class="env-btn" data-live-atm="fog"><span class="btn-indicator"></span>Fog</button>
+                <button class="env-btn" data-live-atm="rain"><span class="btn-indicator"></span>Rain</button>
+              </div>
+            </div>
+
+            <!-- Independent Disturbances -->
+            <div class="env-section">
+              <div class="env-label">DISTURBANCES <span class="env-hint">independent on/off &middot; combine freely</span></div>
+              <div class="disturbance-toggles-grid">
+                <button class="env-btn" data-live-toggle="gaussian"><span class="btn-indicator"></span>Gaussian</button>
+                <button class="env-btn" data-live-toggle="saltpepper"><span class="btn-indicator"></span>Salt &amp; Pepper</button>
+                <button class="env-btn" data-live-toggle="poisson"><span class="btn-indicator"></span>Poisson</button>
+                <button class="env-btn" data-live-toggle="jitter"><span class="btn-indicator"></span>Jitter</button>
+                <button class="env-btn" data-live-toggle="low_light"><span class="btn-indicator"></span>Low Light</button>
+                <button class="env-btn" data-live-toggle="platform"><span class="btn-indicator"></span>Platform Motion</button>
+                <button class="env-btn" data-live-toggle="occlusion"><span class="btn-indicator"></span>Occlusion</button>
+                <button class="env-btn" data-live-toggle="decoys"><span class="btn-indicator"></span>Decoys</button>
+                <button class="env-btn" data-live-toggle="turbulence"><span class="btn-indicator"></span>Turbulence</button>
+              </div>
+            </div>
+
+            <!-- Intensity & Level Sliders -->
+            <div class="env-section">
+              <div class="env-label">LEVELS &amp; INTENSITY</div>
+              <div class="slider-control-row">
+                <div class="sc-header"><span>Overall Disturbance Level</span><span id="slider-intensity-val">0.30</span></div>
+                <input type="range" class="slider-cyan" id="live-slider-intensity" min="0" max="1" step="0.05" value="0.30">
+              </div>
+              <div class="slider-control-row">
+                <div class="sc-header"><span>Turbulence</span><span id="slider-turbulence-val">0.00</span></div>
+                <input type="range" class="slider-cyan" id="live-slider-turbulence" min="0" max="1" step="0.05" value="0.00">
+              </div>
+              <div class="slider-control-row">
+                <div class="sc-header"><span>Vibration / Jitter</span><span id="slider-jitter-val">0.00</span></div>
+                <input type="range" class="slider-cyan" id="live-slider-jitter" min="0" max="1" step="0.05" value="0.00">
+              </div>
+            </div>
+
+            <!-- Target Motion Pattern -->
+            <div class="env-section">
+              <div class="env-label">TARGET MOTION PATTERN</div>
+              <div class="motion-btn-group">
+                <button class="env-btn active" data-scenario-motion="Straight">Straight</button>
+                <button class="env-btn" data-scenario-motion="Circular">Circular</button>
+                <button class="env-btn" data-scenario-motion="Figure-8">Figure-8</button>
+                <button class="env-btn" data-scenario-motion="Random">Random</button>
+                <button class="env-btn" data-scenario-motion="Sinusoidal">Sinusoidal</button>
+              </div>
+            </div>
+
+            <!-- Action buttons in Environment tab -->
+            <div style="display:flex; gap:8px;">
+              <button class="btn btn-ghost" id="btn-reset-tracker" style="flex:1;">Reset Tracker</button>
+            </div>
+          </div>
+
+          <!-- Tab 3: Event Log -->
+          <div class="panel-tab-content" id="tab-content-events">
+            <div class="event-log-container">
+              <div class="event-log-toolbar">
+                <span id="event-log-count">0 events</span>
+                <button class="btn-text-action" id="btn-clear-event-log">Clear</button>
+              </div>
+              <div class="event-log-stream" id="event-log-stream">
+                <div class="event-item">
+                  <span class="event-time">[00:00.0]</span>
+                  <span class="event-desc">Mission initialized</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Bar: Timeline & Actions -->
+      <footer id="bottom-bar">
+        <!-- Left: Segmented State Timeline with real states and durations -->
+        <div class="bottom-timeline-wrapper">
+          <div class="state-timeline-bar" id="bottom-state-timeline">
+            <div class="timeline-segment seg-SEARCHING" id="tseg-SEARCHING">
+              <span class="seg-title">SEARCHING</span>
+              <span class="seg-dur" id="tdur-SEARCHING">00:00.0</span>
+            </div>
+            <div class="timeline-segment seg-ACQUIRING" id="tseg-ACQUIRING">
+              <span class="seg-title">ACQUIRING</span>
+              <span class="seg-dur" id="tdur-ACQUIRING">00:00.0</span>
+            </div>
+            <div class="timeline-segment seg-LOCKED" id="tseg-LOCKED">
+              <span class="seg-title">LOCKED / TRACKING</span>
+              <span class="seg-dur" id="tdur-LOCKED">00:00.0</span>
+            </div>
+            <div class="timeline-segment seg-COASTING" id="tseg-COASTING">
+              <span class="seg-title">COASTING</span>
+              <span class="seg-dur" id="tdur-COASTING">--:--</span>
+            </div>
+            <div class="timeline-segment seg-LOST" id="tseg-LOST">
+              <span class="seg-title">LOST</span>
+              <span class="seg-dur" id="tdur-LOST">--:--</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hidden compatibility elements for existing app logic -->
+        <div style="display:none;">
+          <span id="bottom-phase-text">Initializing&hellip;</span>
+          <span id="bottom-elapsed-text">00:00</span>
+        </div>
+
+        <!-- Right: Bottom Control Action Buttons -->
+        <div class="bottom-control-actions">
+          <button class="action-btn" id="btn-screenshot" title="Take Screenshot (S)">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+            <span>Screenshot</span>
+            <kbd>S</kbd>
+          </button>
+          <button class="action-btn btn-stop-action" id="btn-stop-mission" title="Stop Mission (Esc)">
+            <span class="btn-stop-square"></span>
+            <span>Stop</span>
+            <kbd>Esc</kbd>
+          </button>
+          <button class="action-btn btn-pause-action" id="btn-pause-mission" title="Pause / Resume (Space)">
+            <span id="pause-icon">&#10074;&#10074;</span>
+            <span id="pause-text">Pause</span>
+            <kbd>Space</kbd>
+          </button>
+          <button class="action-btn active" id="btn-bar-camera" title="Switch to Camera View">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+            <span>Camera</span>
+          </button>
+          <button class="action-btn" id="btn-bar-world" title="Switch to World View (V)">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            <span>World</span>
+            <kbd>V</kbd>
+          </button>
+          <button class="action-btn" id="btn-bar-controls" title="Toggle Controls / Edit Environment">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            <span>Controls</span>
+          </button>
+        </div>
+      </footer>
+    </div>
+
+    <!-- ---------- CAMERA LAB ---------- -->
+    <div id="page-cameralab" class="page">
+      <div class="page-header"><h2>Camera Lab</h2></div>
+      <div class="cameralab-body">
+        <div id="cameralab-container" class="card">
+          <img id="cameralab-feed" alt="camera lab feed">
+        </div>
+        <div class="card cameralab-controls">
+          <h4>Detector Mode</h4>
+          <div class="option-row" id="cameralab-tracking-row">
+            <button class="option-pill" data-tracking="CV Only">CV Only</button>
+            <button class="option-pill" data-tracking="AI Only">AI Only</button>
+            <button class="option-pill" data-tracking="Hybrid">Hybrid</button>
+          </div>
+          <h4>Atmosphere</h4>
+          <div class="live-row">
+            <button class="live-btn" data-live-atm="clear">Clear</button>
+            <button class="live-btn" data-live-atm="haze">Haze</button>
+            <button class="live-btn" data-live-atm="fog">Fog</button>
+            <button class="live-btn" data-live-atm="rain">Rain</button>
+            <button class="live-btn" data-live-toggle="low_light">Low Light</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------- BENCHMARK ---------- -->
+    <div id="page-benchmark" class="page">
+      <div class="page-header">
+        <h2>Autonomous Benchmark</h2>
+        <button class="btn btn-primary" id="btn-run-benchmark">&#9654; Run All</button>
+      </div>
+
+      <div class="scenario-pipeline" id="scenario-pipeline">
+        <div class="pipeline-step" data-preset="EASY"><span class="pipeline-marker">&#9675;</span>EASY</div>
+        <div class="pipeline-step" data-preset="MOD"><span class="pipeline-marker">&#9675;</span>MODERATE</div>
+        <div class="pipeline-step" data-preset="HARD"><span class="pipeline-marker">&#9675;</span>HARD</div>
+        <div class="pipeline-step" data-preset="SEV"><span class="pipeline-marker">&#9675;</span>SEVERE</div>
+        <div class="pipeline-step" data-preset="ADV"><span class="pipeline-marker">&#9675;</span>ADVANCED</div>
+      </div>
+
+      <div class="benchmark-body">
+        <div class="card benchmark-current">
+          <h4>Current Scenario</h4>
+          <div id="benchmark-feed-container">
+            <img id="benchmark-feed" alt="benchmark feed">
+          </div>
+          <div class="progress-track"><div class="progress-fill" id="benchmark-progress"></div></div>
+          <div class="card-row"><span>Scenario</span><span id="benchmark-current-name">&mdash;</span></div>
+          <div class="card-row"><span>Elapsed</span><span id="benchmark-current-elapsed">00:00</span></div>
+        </div>
+
+        <div class="card benchmark-table-card">
+          <h4>Results</h4>
+          <table class="data-table" id="benchmark-table">
+            <thead>
+              <tr><th>Scenario</th><th>Environment</th><th>Motion</th><th>Acq Time</th><th>Error</th><th>Loss</th><th>FPS</th><th>Status</th></tr>
+            </thead>
+            <tbody id="benchmark-table-body"></tbody>
+          </table>
+        </div>
+
+        <div class="card benchmark-metrics">
+          <h4>Real-Time Metrics</h4>
+          <div class="rp-row"><span>FPS</span><span id="bench-metric-fps">&mdash;</span></div>
+          <div class="rp-row"><span>Error</span><span id="bench-metric-error">&mdash;</span></div>
+          <div class="rp-row"><span>Lock Rate</span><span id="bench-metric-lock">&mdash;</span></div>
+          <div class="rp-row"><span>State</span><span id="bench-metric-state">&mdash;</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------- REPORTS ---------- -->
+    <div id="page-reports" class="page">
+      <div class="page-header"><h2>Reports</h2></div>
+
+      <div class="reports-body">
+        <div class="card reports-list-card">
+          <h4>Session Logs</h4>
+          <div id="reports-list"></div>
+        </div>
+
+        <div class="card reports-preview-card">
+          <h4 id="reports-preview-title">No Report Selected</h4>
+          <div class="reports-actions">
+            <button class="btn btn-primary btn-sm" id="btn-export-pdf">Export PDF</button>
+            <button class="btn btn-ghost btn-sm" id="btn-export-data">Export Data</button>
+            <button class="btn btn-ghost btn-sm" id="btn-share-report">Share</button>
+          </div>
+
+          <div class="reports-metric-cards">
+            <div class="card metric-card"><span class="metric-card-label">RMSE</span><span class="metric-card-value" id="report-metric-rmse">&mdash;</span></div>
+            <div class="card metric-card"><span class="metric-card-label">Lock Rate</span><span class="metric-card-value" id="report-metric-lock">&mdash;</span></div>
+            <div class="card metric-card"><span class="metric-card-label">Acq Time</span><span class="metric-card-value" id="report-metric-acq">&mdash;</span></div>
+            <div class="card metric-card"><span class="metric-card-label">Max Error</span><span class="metric-card-value" id="report-metric-maxerr">&mdash;</span></div>
+          </div>
+
+          <div class="chart-container">
+            <canvas id="error-chart"></canvas>
+          </div>
+
+          <table class="data-table" id="timeline-table">
+            <thead><tr><th>Time</th><th>State</th><th>Error (px)</th><th>Confidence</th></tr></thead>
+            <tbody id="timeline-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="/static/js/chart.umd.min.js?v=mission_v2"></script>
+  <script src="/static/js/api.js?v=mission_v2"></script>
+  <script src="/static/js/camera.js?v=mission_v2"></script>
+  <script src="/static/js/world-view.js?v=mission_v2"></script>
+  <script src="/static/js/pages.js?v=mission_v2"></script>
+  <script src="/static/js/results.js"></script>
+  <script src="/static/js/video-preflight.js"></script>
+  <script src="/static/js/app.js?v=mission_v2"></script>
+  <script src="/static/js/diagnostics.js?v=repair1"></script>
+  <script src="/static/js/shell.js"></script>
+  <script src="/static/js/camera-lab.js?v=4"></script>
+  <script src="/static/js/mission-flow.js"></script>
+  <script src="/static/js/tracking-overlay.js?v=4"></script>
+  <script src="/static/js/engineering-view.js?v=4"></script>
+  <script src="/static/js/comparison.js?v=6"></script>
+  <script src="/static/js/progress.js?v=3"></script>
+  <script src="/static/js/dashboard-polish.js?v=3"></script>
+  <script src="/static/js/benchmark-polish.js?v=3"></script>
+  <script src="/static/js/home-observatory.js?v=1"></script>
+</body>
+</html>

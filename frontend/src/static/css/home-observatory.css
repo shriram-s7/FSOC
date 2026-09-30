@@ -1,0 +1,35 @@
+#page-splash{isolation:isolate;background:radial-gradient(ellipse at 80% 15%,#13324666,transparent 48%),radial-gradient(ellipse at 0 70%,#122e3544,transparent 55%),#050c14}
+#page-splash:before{display:none}
+#page-splash #splash-stars{opacity:.16;pointer-events:none}
+.observatory-art{position:absolute!important;top:0;right:0;width:min(760px,60vw);height:520px;z-index:0!important;pointer-events:none;overflow:hidden;opacity:.8;mask-image:linear-gradient(#000 50%,transparent)}
+.observatory-art svg{width:100%;height:100%;object-fit:contain}
+#page-splash>.observatory-hero{align-items:flex-start!important;text-align:left!important;width:min(1250px,90vw);margin:auto;padding:38px 0 30px!important;height:auto!important;min-height:0!important}
+#page-splash .old-home-emblem{display:none!important}
+.observatory-eyebrow{font:10px var(--font-mono);letter-spacing:2.5px;color:#7fbdc9;margin:0 0 22px}
+#page-splash .observatory-hero h1{font-size:clamp(36px,4.4vw,64px)!important;letter-spacing:-2.4px!important;font-weight:600!important;text-shadow:none!important;line-height:1.12;max-width:800px}
+.hero-period{color:#6ee7d2}
+#page-splash .observatory-hero h1+p{font-size:15px!important;letter-spacing:.15px!important;max-width:570px;margin:16px 0 34px!important;color:#a7bdca!important;line-height:1.8}
+#page-splash .mission-picker-label{font:10px var(--font-mono)!important;letter-spacing:2px;margin:0 0 16px!important;color:#809cae!important}
+#page-splash>div.observatory-hero:nth-of-type(2)>.six-missions{width:100%!important;gap:16px!important;grid-template-columns:repeat(3,minmax(0,1fr))!important}
+#page-splash .six-missions .mission-card{padding:22px 24px 17px!important;min-height:202px!important;border:1px solid #29404e!important;border-radius:14px;background:linear-gradient(125deg,#102332f5,#09131fed);box-shadow:0 8px 26px #0002;transition:transform .2s,border-color .2s,background .2s,box-shadow .2s;display:flex;flex-direction:column}
+#page-splash .mission-card:after{display:none}
+#page-splash .mission-card:hover,#page-splash .mission-card:focus-visible{transform:translateY(-4px);border-color:var(--card-accent)!important;background:linear-gradient(125deg,#173044,#0a1928);box-shadow:0 12px 32px #0005}
+#page-splash #card-demo{background:linear-gradient(125deg,#123335f5,#0a1b26f5);border-color:#38625f!important}
+.mission-card-top{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+#page-splash .mission-card-icon{display:flex;align-items:center;justify-content:center;width:35px;height:35px;border:1px solid #ffffff17;background:#ffffff05;border-radius:9px;color:var(--card-accent);margin:0}
+.mission-card-icon svg{width:23px;height:23px}
+.mission-card-category{font:9px var(--font-mono);letter-spacing:1.7px;color:var(--card-accent)}
+.mission-card-number{margin-left:auto;font:11px var(--font-mono);color:#668296}
+#page-splash .six-missions .mission-card-title{font-size:21px!important;letter-spacing:-.35px!important;font-weight:600;margin:0 0 8px;color:#edf5fa}
+#page-splash .six-missions .mission-card-desc{font-size:13px!important;line-height:1.6;color:#9bb1c2;margin:0 0 20px;max-width:95%}
+.mission-card-footer{border-top:1px solid #ffffff10;padding-top:12px;display:flex;align-items:center;justify-content:space-between;margin-top:auto;font-size:11px;color:#bdcddb}
+#page-splash .mission-card-arrow{position:static;color:var(--card-accent);font-size:21px;line-height:1}
+#page-splash .home-additions{position:relative;z-index:1;width:min(1250px,90vw);margin:0 auto 30px}
+#page-splash .render-choice,#page-splash .home-system,#page-splash .home-recent{background:#0a1621e8;border-color:#243947;border-radius:12px}
+#page-splash .render-choice{padding:12px 18px;font-size:12px}
+#page-splash .render-choice small{font-size:11px}
+#page-splash .home-system{font-size:11px}
+@media(max-width:900px){#page-splash>div.observatory-hero:nth-of-type(2)>.six-missions{grid-template-columns:repeat(2,minmax(0,1fr))!important}.observatory-art{width:75vw;opacity:.5}#page-splash>.observatory-hero{padding-top:26px!important}}
+@media(max-width:560px){#page-splash>div.observatory-hero:nth-of-type(2)>.six-missions{grid-template-columns:1fr!important}#page-splash .observatory-hero h1{letter-spacing:-1px!important}.observatory-art{width:100vw}.mission-card-category{font-size:9px}#page-splash .render-choice{align-items:flex-start;flex-direction:column}#page-splash .home-recent .session-row{flex-wrap:wrap;gap:10px;overflow-wrap:anywhere}}
+@media(prefers-reduced-motion:reduce){#page-splash .mission-card{transition:none!important}#page-splash .mission-card:hover{transform:none}}
+

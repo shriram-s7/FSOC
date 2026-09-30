@@ -1,0 +1,120 @@
+
+/* Shared native controls and accessible legacy surfaces. */
+:root { color-scheme: dark; --bg-app:#020910; --bg-panel:#040d16; --bg-card:#06101a; --border:#19364a; --right-panel-width:34%; --topbar-height:60px; --bottombar-height:112px; }
+body {font-family:var(--font-sans); font-size:13px;}
+button,input,select,textarea {font:inherit; color:var(--text-primary); background-color:var(--bg-input); border-color:var(--border);}
+input::placeholder,textarea::placeholder {color:var(--text-secondary);opacity:1;}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible {outline:2px solid var(--accent);outline-offset:3px;}
+.control-main {padding:16px 20px;gap:22px;flex:1;height:auto;}
+.control-left {padding:0;}
+.control-right {border:1px solid var(--border);border-radius:7px;}
+.view-header-row {height:44px;margin-bottom:16px;}
+.view-status-hint {display:none;}
+.view-tab-btn {padding:9px 16px;font-size:14px;}
+.viewport-card {border-radius:3px;}
+.cam-chip {background:rgba(2,12,23,.96);backdrop-filter:none;font:14px var(--font-mono);}
+.cam-chip-tl,.cam-chip-tr {top:14px;}
+.minimap-inset-card {width:22%;height:22%;min-width:150px;min-height:100px;backdrop-filter:none;}
+.panel-tab-btn {padding:14px 6px;font-size:14px;color:var(--text-secondary);}
+.panel-tab-content {padding:12px 10px;gap:12px;}
+.panel-card {padding:12px;border-radius:4px;}
+.card-section-title {color:var(--text-secondary);font:14px var(--font-mono);letter-spacing:.5px;}
+.tracking-state-card {min-height:116px;}
+.tsc-state-val {font-size:30px;}
+.tsc-label,.tsc-k {font:12px var(--font-mono);color:var(--text-secondary);}
+.tsc-v {font:14px var(--font-mono);}
+#bottom-bar {margin:0 20px 20px;height:94px;padding:10px;border:1px solid var(--border);border-radius:7px;background:var(--bg-panel);gap:16px;}
+.state-timeline-bar {height:64px;border:0;gap:4px;background:transparent;}
+.timeline-segment {border:1px solid currentColor;border-radius:4px;min-width:74px;font:11px var(--font-mono);}
+.action-btn {min-height:70px;min-width:70px;flex-direction:column;justify-content:center;font-size:12px;}
+.action-btn svg {width:22px;height:22px;}
+.topbar-clock {display:none;}
+.topbar-left,.topbar-right {gap:12px;min-width:0;}
+.shared-topbar {flex-shrink:0;}
+@media(max-width:1440px) { :root {--bottombar-height:90px;--topbar-height:54px;} .control-main{padding:12px;gap:14px;} #bottom-bar{margin:0 12px 12px;height:78px;} .action-btn{min-width:56px;min-height:54px;} .topbar-left,.topbar-right{gap:8px;} .session-chip{display:none;} .tracking-state-card{min-height:96px;} .panel-card{padding:10px;} .panel-tab-content{gap:8px;padding:8px;} }
+@media(max-height:760px) { .view-header-row{height:34px;margin-bottom:8px;} .tracking-state-card{min-height:84px;} .tsc-state-val{font-size:24px;} .card-section-title{margin-bottom:6px;} .panel-tab-btn{padding:10px 4px;} .panel-card{padding:8px;} }
+
+#global-diagnostics {position:fixed;top:16px;right:140px;z-index:500;padding:8px 12px;border:1px solid var(--border);border-radius:5px;cursor:pointer;}
+body:has(#page-control.active) #global-diagnostics {display:none;}
+#diagnostics-drawer[hidden]{display:none;}
+#diagnostics-drawer {position:fixed;right:0;top:0;bottom:0;width:clamp(380px,30vw,520px);z-index:10001;background:#020d17;border-left:1px solid #24516c;padding:12px;overflow-y:auto;box-shadow:-12px 0 40px #0008;}
+#diagnostics-drawer header {display:flex;justify-content:space-between;align-items:center;padding:6px 12px 20px;}
+#diagnostics-drawer h2{font-size:22px;font-weight:600;}
+#diag-close {border:0;font-size:28px;cursor:pointer;background:transparent;}
+#diagnostics-drawer nav{display:flex;border:1px solid var(--border);border-radius:6px;margin-bottom:10px;}
+#diagnostics-drawer nav button{flex:1;border:0;border-bottom:2px solid transparent;padding:16px 4px;background:transparent;cursor:pointer;font-size:14px;color:var(--text-secondary);}
+#diagnostics-drawer nav [aria-selected=true]{border-bottom-color:var(--accent);color:var(--text-primary);background:var(--accent-faint);}
+#diag-content{display:flex;flex-direction:column;gap:10px;}
+#diag-content section{border:1px solid var(--border);border-radius:6px;padding:10px;background:#04101b;}
+#diag-content h3{font:14px var(--font-mono);color:#b5dfff;margin-bottom:12px;}
+#diag-content table{width:100%;border-collapse:collapse;font:12px var(--font-mono);}
+#diag-content th,#diag-content td{padding:8px 6px;text-align:right;border-bottom:1px solid var(--border);}
+#diag-content th:first-child,#diag-content td:first-child{text-align:left;}
+#diag-content canvas{width:100%;display:block;}
+.diag-tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;color:var(--text-secondary);font-size:12px;}
+.diag-tiles strong{display:block;font:24px var(--font-mono);color:var(--accent);padding-top:8px;}
+#diag-details dt{color:var(--text-secondary);margin-top:18px;text-transform:capitalize;}
+#diag-details dd{overflow-wrap:anywhere;font:14px var(--font-mono);margin-top:6px;}
+#diag-filter{display:block;width:100%;padding:10px;margin:10px 0;}
+#diag-copy{padding:6px 14px;margin-right:12px;}
+#diag-log{height:65vh;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font:12px var(--font-mono);padding-top:16px;}
+.diagnostics-open #page-control{width:calc(100% - clamp(380px,30vw,520px));}
+.diagnostics-open .control-right{display:none;}
+.diagnostics-open .topbar-right{display:none;}
+.diagnostics-open .action-btn:nth-child(n+3){display:none;}
+.diagnostics-open .control-main{padding-right:16px;}
+.metric-row{min-height:39px;grid-template-columns:minmax(0,1.35fr) minmax(0,1.25fr) 64px 60px;}
+.metric-name-col{white-space:normal;overflow:visible;}
+.metric-val-col{flex-wrap:wrap;gap:3px 6px;}
+.metric-limit-col.metric-limit-none{opacity:1;}
+.dist-mini-row{padding:6px 8px;background:#081624;border:1px solid var(--border);border-radius:4px;}
+@media(max-width:1440px){.metric-row{grid-template-columns:1.4fr 1fr 42px 54px;font-size:11px;min-height:34px;}.sparkline-canvas{width:40px;}.metric-name-col{font-size:11px;}.dist-mini-row{padding:4px;}.disturbances-mini-grid{gap:5px;}.dist-mini-bar{width:24px;}.dist-mini-name{white-space:normal;}.topbar-breadcrumb{font-size:11px;}}
+
+#topbar-clock{display:none;}
+#camera-container{container-type:size;}
+#camera-hud-canvas{width:min(100cqw,133.333cqh);height:min(100cqh,75cqw);left:50%;top:50%;transform:translate(-50%,-50%);}
+.topbar-logo .logo-text{font-size:20px;letter-spacing:1px;}
+.logo-symbol{width:38px;height:38px;box-shadow:none;}
+.detector-btn.active{background:var(--accent-faint);color:var(--accent);box-shadow:inset 0 0 6px var(--accent-dim);}
+#cam-rec{font-size:13px;}
+.cam-chip-tl{padding:7px 12px;}
+#cam-chip-state-text{font-size:14px;}
+#cam-chip-conf{font-size:14px;}
+.tracking-state-card{gap:12px;background:transparent;padding:0;border:0;}
+.tsc-left{flex:0 0 38%;border:1px solid var(--border);border-radius:5px;padding:14px;border-left:2px solid var(--success);}
+.tsc-right{border:1px solid var(--border);border-radius:5px;padding:12px;flex:1;}
+.tsc-divider{display:none;}
+#diag-bars{max-height:210px;}
+#diag-legend{display:flex;flex-wrap:wrap;gap:7px;font-size:10px;color:var(--text-secondary);margin-top:8px;}
+#diag-legend span{border-left:6px solid;padding-left:4px;}
+@media(min-width:1500px){.metric-row{min-height:40px;}.dist-mini-row{padding:5px 8px;}.minimap-inset-card{width:22%;height:22%;}}
+@media(max-width:1440px){#session-chip{display:none;}.logo-symbol{width:30px;height:30px;}.topbar-logo .logo-text{font-size:17px;}.topbar-center{gap:7px;}.state-pill-large{padding:6px 9px;}.topbar-breadcrumb{gap:5px;}.tsc-right{padding:8px;}.tsc-left{padding:10px;}}
+
+#secondary-navigation{display:none;position:fixed;bottom:90px;left:50%;transform:translateX(-50%);gap:12px;z-index:100;}
+body:has(#page-splash.active) #secondary-navigation{display:flex;}
+#secondary-navigation button{padding:10px 20px;border:1px solid var(--border);border-radius:6px;cursor:pointer;}
+@media(max-width:1440px){.topbar-breadcrumb .bc-link,.topbar-breadcrumb .bc-sep{display:none;}.control-right{width:38%;}.topbar-center{flex-shrink:1;}.state-pill-large{font-size:12px;}.detector-btn{padding:5px 8px;}.topbar-btn{padding:6px 8px;}}
+@media(max-height:760px){.metric-row{min-height:30px;}.dist-mini-row{padding:3px;}.tsc-label,.tsc-k{font-size:10px;}.panel-card .card-section-title{font-size:12px;}.action-btn{font-size:11px;}.timeline-segment{min-width:64px;font-size:10px;}.metric-val-col{font-size:11px;}.dist-mini-val{font-size:10px;}}
+
+.video-mode .view-status-hint{display:block;color:var(--text-primary);font:12px var(--font-mono);background:var(--bg-card);border:1px solid var(--border);padding:6px;border-radius:4px;}
+#reports-list .report-item{overflow-wrap:anywhere;gap:8px;}
+#reports-list .report-item span{flex-shrink:0;}
+#cameralab-feed{width:100%;height:100%;object-fit:contain;}
+@media(max-width:1440px){.video-mode .topbar-breadcrumb{display:none;}.video-mode .latency-badge{display:none;}}
+
+#cam-rec{cursor:pointer;color:var(--text-secondary);border-color:var(--border);}
+#cam-rec .rec-dot{animation:none;box-shadow:none;background:var(--text-secondary);}
+#cam-rec.active{color:var(--danger);border-color:var(--danger);}
+#cam-rec.active .rec-dot{background:var(--danger);animation:blink 1.2s infinite;}
+#diagnostics-drawer:not([hidden]){animation:drawer-enter .18s ease-out;}
+@keyframes drawer-enter{from{transform:translateX(100%)}to{transform:translateX(0)}}
+@media(prefers-reduced-motion:reduce){#diagnostics-drawer:not([hidden]){animation:none;}}
+
+/* Fourth visual comparison: match reference viewport margins and timeline. */
+@media(min-width:1500px){.control-left{padding-bottom:14px;}.view-mode-toggle-group{margin-left:12px;}.cam-chip-tl,.cam-chip-bl{left:32px;}.cam-chip-tr{right:26px;}.minimap-inset-card{width:21.5%;height:22%;bottom:20px;right:26px;}.bottom-control-actions{gap:12px;}.action-btn{min-width:78px;}.bottom-timeline-wrapper{padding:0 8px;}}
+.state-timeline-bar{height:60px;overflow:visible;align-items:flex-start;padding-top:8px;}
+.timeline-segment{height:26px;min-width:88px;font-weight:400;}
+.timeline-segment .seg-dur{position:absolute;top:31px;color:var(--text-secondary);opacity:1;white-space:nowrap;font-size:12px;}
+@media(max-width:1440px){.timeline-segment{min-width:68px;}.timeline-segment .seg-dur{font-size:10px;}.state-timeline-bar{height:52px;}}
+.diagnostics-open #cam-rec,.diagnostics-open #topbar-latency-badge{display:none;}
+.diagnostics-open .topbar-center{margin-left:auto;}

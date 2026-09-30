@@ -1,0 +1,128 @@
+@font-face{font-family:FSOC Sans;src:url('../fonts/DejaVuSans.woff2') format('woff2');font-weight:400;font-display:swap;}
+@font-face{font-family:FSOC Sans;src:url('../fonts/DejaVuSans-Bold.woff2') format('woff2');font-weight:600 900;font-display:swap;}
+@font-face{font-family:FSOC Mono;src:url('../fonts/DejaVuSansMono.woff2') format('woff2');font-display:swap;}
+/* ==========================================================================
+   FSOC-PAT Design System Tokens
+   Source: Mockup layout & style (live_mission.png & diagnostc_bar_at_all_screens.png)
+   Dark navy background, cyan accent, standardized state colors & typography.
+   ========================================================================== */
+
+:root {
+  /* ---------------- Surfaces & Backgrounds ---------------- */
+  --bg-app: #060b13;            /* Deepest background */
+  --bg-panel: #0a121e;          /* Panels, top bar, bottom bar */
+  --bg-card: #0d1726;           /* Cards, widgets */
+  --bg-card-sub: #101c2e;       /* Inset sub-cards, active cards */
+  --bg-card-hover: #14233a;     /* Hover surface */
+  --bg-input: #070e1a;          /* Inputs, wells, toggle tracks */
+  --bg-canvas: #040810;         /* Canvas backdrop */
+  --bg-video: #020509;          /* Video backdrop */
+  --bg-overlay: rgba(6, 12, 22, 0.85); /* HUD overlay panels */
+  --bg-overlay-glass: rgba(10, 18, 30, 0.72);
+
+  /* ---------------- Primary Cyan Accent ---------------- */
+  --accent: #00f0ff;            /* Glowing cyan */
+  --accent-rgb: 0, 240, 255;
+  --accent-dim: rgba(0, 240, 255, 0.12);
+  --accent-faint: rgba(0, 240, 255, 0.05);
+  --accent-border: rgba(0, 240, 255, 0.35);
+  --accent-glow: rgba(0, 240, 255, 0.45);
+  --accent-hover: #33f4ff;
+  --accent-active: #00c8d6;
+  --ink: #040d16;
+
+  /* ---------------- Tracker State Colors ---------------- */
+  /* LOCKED: vibrant emerald / mint green */
+  --state-locked: #00e699;
+  --state-locked-rgb: 0, 230, 153;
+  --state-locked-dim: rgba(0, 230, 153, 0.14);
+  --state-locked-border: rgba(0, 230, 153, 0.45);
+
+  /* ACQUIRING: amber / vivid orange */
+  --state-acquiring: #f59e0b;
+  --state-acquiring-rgb: 245, 158, 11;
+  --state-acquiring-dim: rgba(245, 158, 11, 0.14);
+  --state-acquiring-border: rgba(245, 158, 11, 0.45);
+
+  /* COASTING: sky / tech blue */
+  --state-coasting: #38bdf8;
+  --state-coasting-rgb: 56, 189, 248;
+  --state-coasting-dim: rgba(56, 189, 248, 0.14);
+  --state-coasting-border: rgba(56, 189, 248, 0.45);
+
+  /* SEARCHING: purple / slate violet */
+  --state-searching: #ba9aff;
+  --state-searching-rgb: 139, 92, 246;
+  --state-searching-dim: rgba(139, 92, 246, 0.14);
+  --state-searching-border: rgba(139, 92, 246, 0.45);
+
+  /* LOST: bright danger red */
+  --state-lost: #ff7787;
+  --state-lost-rgb: 239, 68, 68;
+  --state-lost-dim: rgba(239, 68, 68, 0.14);
+  --state-lost-border: rgba(239, 68, 68, 0.45);
+
+  /* ---------------- Semantic Status ---------------- */
+  --success: #00e699;
+  --success-dim: rgba(0, 230, 153, 0.12);
+  --warning: #f59e0b;
+  --warning-dim: rgba(245, 158, 11, 0.12);
+  --danger: #ff7787;
+  --danger-dim: rgba(239, 68, 68, 0.14);
+  --info: #00f0ff;
+
+  /* ---------------- Typography ---------------- */
+  --font-sans: "FSOC Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "FSOC Mono", "Consolas", "Courier New", "JetBrains Mono", monospace;
+
+  --text-primary: #f1f5f9;
+  --text-secondary: #b2c9dc;
+  --text-muted: #a6bdd0;
+  --text-dim: #a6bdd0;
+  --text-cyan: #00f0ff;
+  --text-green: #00e699;
+
+  --font-size-2xs: 10px;
+  --font-size-xs: 11px;
+  --font-size-sm: 12px;
+  --font-size-base: 13px;
+  --font-size-md: 14px;
+  --font-size-lg: 16px;
+  --font-size-xl: 18px;
+  --font-size-2xl: 22px;
+  --font-size-3xl: 28px;
+  --font-size-4xl: 36px;
+
+  /* ---------------- Borders & Lines ---------------- */
+  --border: #16263d;
+  --border-light: rgba(255, 255, 255, 0.08);
+  --border-dim: rgba(22, 38, 61, 0.55);
+  --border-bright: #1f3d64;
+  --border-focus: #00f0ff;
+
+  /* ---------------- Corner Radii ---------------- */
+  --radius-xs: 3px;
+  --radius-sm: 5px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-pill: 9999px;
+
+  /* ---------------- Shadows & Glows ---------------- */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.6);
+  --glow-cyan: 0 0 12px rgba(0, 240, 255, 0.35);
+  --glow-green: 0 0 12px rgba(0, 230, 153, 0.35);
+
+  /* ---------------- Layout Dimensions ---------------- */
+  --topbar-height: 52px;
+  --bottombar-height: 58px;
+  --right-panel-width: 420px;
+}
+
+/* Legacy public token names used by report and builder views. */
+:root {
+  --accent-green: var(--success);
+  --accent-red: var(--danger);
+}

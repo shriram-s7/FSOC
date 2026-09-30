@@ -1,0 +1,186 @@
+world:
+  width: 2000
+  height: 2000
+  background_color: [2, 4, 12]
+  num_stars: 800
+  star_min_brightness: 30
+  star_max_brightness: 180
+
+camera:
+  resolution_width: 640
+  resolution_height: 480
+  hfov_deg: 4.0
+  vfov_deg: 3.0
+  update_rate_hz: 60
+  max_pan_speed_deg_s: 5.0
+  max_tilt_speed_deg_s: 5.0
+  latency_frames: 2
+  ff_mult: 1.3
+  initial_pan: 0.0
+  initial_tilt: 0.0
+  # Compatibility keys for control/pid_controller.py and tracking/search_pattern.py
+  fov_degrees: 4.0
+  slew_rate_deg_per_sec: 5.0
+  pan_min: -30.0
+  pan_max: 30.0
+  tilt_min: -20.0
+  tilt_max: 20.0
+
+# Compatibility block for detection/detector.py (operates on the 640x480 camera feed)
+window:
+  width: 640
+  height: 480
+
+target:
+  count: 1
+  shape: square
+  size_px: 10
+  min_size_px: 5
+  max_size_px: 20
+  brightness: 255
+  color: [255, 255, 255]
+  initial_position: random
+
+motion:
+  type: straight
+  speed_px_s: 30.0
+  circular_radius: 300
+  figure8_amplitude_x: 400
+  figure8_amplitude_y: 200
+  figure8_frequency: 0.08
+  random_volatility: 15.0
+  random_max_speed: 60.0
+  spiral_growth_rate: 8.0
+  sinusoidal_amplitude_x: 400
+  sinusoidal_amplitude_y: 200
+  sinusoidal_frequency: 0.06
+  bounce_walls: true
+
+distractors:
+  count: 0
+  speed_px_s: 8.0
+
+obstacles:
+  count: 1
+
+platform:
+  enabled: false
+  type: linear
+  speed_px_s: 10.0
+  max_motion_px: 20
+
+disturbance:
+  turbulence: 0.0
+  vibration: 0.0
+  noise: 0.0
+  scintillation: 0.0
+  jerk_probability: 0.0
+  noise_type_gaussian: true
+  noise_type_saltpepper: false
+  noise_type_poisson: false
+  atmosphere: clear
+  # Step 6a: rain (atmosphere 'rain') — falling thin bright diagonal
+  # streaks over a slightly dimmed, slightly blurred scene.
+  rain:
+    streaks: 110            # streaks on screen at once
+    length_px: [12, 30]
+    brightness: [140, 200]  # grey level of a streak (beacon is ~255)
+    fall_px_s: 700          # streak fall speed
+    slant: 0.35             # dx per dy (diagonal)
+    dim: 0.85               # scene multiplier
+    blur_ksize: 3           # scene Gaussian blur (odd; 1 = off)
+  # Step 6a: low light (independent toggle, combines with any
+  # atmosphere) — lower sensor gain plus more sensor noise.
+  low_light:
+    gain: 0.35              # scene multiplier
+    shot_gain: 2.0          # grey levels per photon (Poisson shot noise)
+    read_noise_sigma: 6.0   # additive Gaussian read noise (grey levels)
+  # Step 6a: levels the live UI on/off toggles switch to.
+  toggle_noise_level: 1.0   # 1.0 = PS max (gauss sigma 20, s&p 10%, poisson gain 8)
+  toggle_jitter_level: 1.0  # 1.0 = +/-20 px vibration
+  toggle_decoys: 3          # decoy beacons when "Decoys" is on
+  toggle_turbulence_level: 0.5
+  occlusion_repeat_s: 12.0  # "Occlusion" on: re-place an occluder over the beacon this often
+
+tracking:
+  kalman_process_noise: 0.1
+  kalman_measurement_noise: 6.0
+  temporal_fusion_window: 8
+  lock_threshold: 0.82
+  unlock_threshold: 0.35
+  reacquire_threshold: 0.85
+  # Step 4: beacon motion model for prediction / coasting.
+  #   imm — CV + coordinated-turn IMM (follows curves through a gap)
+  #   cv  — single constant-velocity Kalman (pre-step-4 behaviour)
+  prediction_model: imm
+  # Step 6b-1 relative brightness gate (image-measured, low light):
+  # gate = min(brightness_min, ratio x star level), star level = the
+  # Nth brightest pixel of the cleaned frame, all candidates masked.
+  # X07 low-light reference 46-54; masking only the top candidate let
+  # decoys raise seed 2's reference to 83-88 (beacon mean ~63).
+  brightness_rel_ratio: 1.0
+  star_level_top_px: 32
+
+# Step 6b-1: image stabiliser ignores bright elongated components
+# (rain streaks) - they move by themselves and fooled the star-field
+# phase correlation into 20-50 px of fake jitter.
+# Prompt 3: image-only scene estimator (tracking/scene_estimator.py). Every
+# adaptive behaviour is derived from these measurements, never from the
+# disturbance settings. Calibrated on CNN training seeds 1000-1005 under
+# clear/haze/fog/dense fog/rain/low light/gaussian/s&p/poisson/jitter/
+# turbulence (scratch/p3/calib_*.log); not on test scenarios.
+scene:
+  veil_background: [12.0, 23.0, 60.0]   # median grey -> degradation 0 / 0.5 / 1
+  dim_star_contrast: [45.0, 60.0]       # star level - background: <=45 -> 1, >=60 -> 0
+  rain_streak_frac: [0.01, 0.02]        # streak cover: 1 % -> 0, 2 % -> 1
+  noise_sigma: [3.0, 4.0]               # raw MAD sigma: 3 -> 0, 4 -> 1
+  noise_saturation: [0.001, 0.05]       # pixels >= 250: 0.1 % -> 0, 5 % -> 1
+
+# Streak definition used by the scene estimator's rain mode (stabiliser).
+stabiliser:
+  streak_min_len_px: 10     # full-res bbox length; 0 = off
+  streak_contrast: 8.0      # grey levels above the frame median
+  streak_min_frac: 0.02     # streaks must cover >= this frame fraction to count as rain
+                            # (3 seeds x 30 s: X05 2.77-7.01 %; S12 <= 1.10 %, S14 <= 1.72 %)
+
+detection:
+  # Step 5a detector mode: hybrid (blob detector + CNN v2) | cv (blob
+  # detector + hand-made score, no CNN) | ai (CNN v2 whole-frame scan,
+  # no blob detector). The web UI switches it live.
+  mode: hybrid
+  # cv mode score = sigmoid(w . [peak, size/100, squareness, contrast] + b)
+  # (detection/cv_scorer.py). Fitted ONLY on the CNN training seeds:
+  # logistic regression on seeds 1000-1004, checked on 1005
+  # (scratch/s5/fit_cv.py): 89% beacon recall, 0.55% false positives
+  # at 0.6 on held-out seed 1005.
+  cv_weights: [1.639, 3.441, 10.547, -0.98]
+  cv_bias: -11.945
+  # Step 5c operating-point calibration: CV's own threshold, chosen on
+  # training seeds 1000-1004 only (max recall - false-positive rate;
+  # scratch/s5b/calib_cv.py: 0.55, held-out 1005 recall 89.1%, FP 0.55%),
+  # is rescaled to temporal fusion's lock level. Remove
+  # cv_operating_threshold to get the raw (Step 5b first-run) score.
+  cv_operating_threshold: 0.55
+  cv_operating_level: 0.82
+  # ai mode: stride-8 CNN confidence map; peaks below this are dropped.
+  ai_min_conf: 0.3
+
+classifier:
+  # CNN beacon classifier. v2 = trained on simulator-rendered patches incl.
+  # PS-level noise, fog/haze/low light and round distractors.
+  # Switch back to v1: models/beacon_classifier.pt
+  model_path: models/beacon_classifier_v2.pt
+
+pid:
+  kp: 0.5
+  ki: 0.005
+  kd: 0.02
+  ff_mult: 1.3
+
+logging:
+  output_dir: logs
+  auto_save: true
+
+scenario:
+  seed: 7
+  name: default

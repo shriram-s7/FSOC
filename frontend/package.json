@@ -1,0 +1,49 @@
+{
+  "name": "fsoc-pat",
+  "version": "1.0.0",
+  "main": "electron.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder build --win --x64"
+  },
+  "keywords": [],
+  "author": "FSOC-PAT Team",
+  "license": "ISC",
+  "description": "FSOC-PAT autonomous coarse alignment simulator",
+  "devDependencies": {
+    "electron": "^38.8.6",
+    "electron-builder": "^26.15.3"
+  },
+  "build": {
+    "appId": "com.fsoc.pat",
+    "productName": "FSOC-PAT",
+    "directories": {
+      "output": "../dist"
+    },
+    "files": [
+      "electron.js",
+      "package.json",
+      "assets/icon.png"
+    ],
+    "extraResources": [
+      {
+        "from": "../build/pyi-dist/fsoc-server",
+        "to": "fsoc-server"
+      }
+    ],
+    "asar": true,
+    "compression": "normal",
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "FSOC-PAT"
+    }
+  }
+}

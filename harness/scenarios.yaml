@@ -1,0 +1,163 @@
+# FSOC-PAT test-harness scenarios.
+#
+# Every scenario inherits `defaults` and overrides what it needs.
+# Fields:
+#   motion            straight | circular | figure8 | random | sinusoidal | spiral
+#   speed_px_s        beacon speed (straight-line model; config default 30)
+#   initial_position  random (seeded, +/-250 px around world centre) |
+#                     near_center | center
+#   atmosphere        clear | haze | fog | rain | dense_fog
+#   low_light         true/false — lower gain + more sensor noise;
+#                     independent of (combines with) atmosphere
+#   noise_level       0-1 sensor-noise strength; 1.0 = PS 26169 maximum
+#   noise_types       any of [gaussian, saltpepper, poisson]
+#                       gaussian:   sigma = 20 * level (grey levels)
+#                       saltpepper: 10% * level of pixels (half 255, half 0)
+#                       poisson:    shot noise, gain = 8 * level grey
+#                                   levels/photon -> std = sqrt(gain * I)
+#   camera_jitter     0-1 vibration level: 18*level px amplitude
+#                     (0.6 sinusoid + gaussian sigma 0.2 per axis)
+#   turbulence, scintillation, jerk   0-1 engine levels
+#   platform_motion   none | linear (engine offset random-walk, clamped
+#                     to +/-20 px)
+#   platform_speed_px_s
+#   num_distractors
+#   decoys_in_view    true = decoys start in the camera view around the beacon
+#   num_stars         override config world.num_stars (default 800)
+#   duration_s
+#   events            optional list of timed events:
+#                       {t: 20, set: {atmosphere: fog}}   change any of the
+#                           disturbance fields above at time t (seconds)
+#                       {t: 30, blackout: 2.0}            detector returns
+#                           no candidates from t for 2.0 s
+#                     A frame counts as "event active" (for re-acquisition
+#                     scoring) while a blackout runs or while any `set`
+#                     field differs from the scenario's own baseline value.
+
+defaults:
+  motion: straight
+  speed_px_s: 30.0
+  initial_position: random
+  atmosphere: clear
+  low_light: false
+  noise_level: 0.0
+  noise_types: [gaussian]
+  camera_jitter: 0.0
+  turbulence: 0.0
+  scintillation: 0.0
+  jerk: 0.0
+  platform_motion: none
+  platform_speed_px_s: 10.0
+  num_distractors: 0
+  duration_s: 60
+  events: []
+
+scenarios:
+  S00:
+    desc: Quick Demo parity (EASY preset, straight 20 px/s, near_center)
+    speed_px_s: 20.0
+    initial_position: near_center
+
+  S01: {desc: "clear, straight",   motion: straight}
+  S02: {desc: "clear, circular",   motion: circular}
+  S03: {desc: "clear, figure-8",   motion: figure8}
+  S04: {desc: "clear, random",     motion: random}
+  S05: {desc: "clear, sinusoidal", motion: sinusoidal}
+  S06: {desc: "clear, spiral",     motion: spiral}
+
+  S07: {desc: "straight, 3 distractors", num_distractors: 3}
+
+  S08:
+    desc: straight, fog 20s-25s
+    events:
+      - {t: 20, set: {atmosphere: fog}}
+      - {t: 25, set: {atmosphere: clear}}
+  S09:
+    desc: circular, fog 20s-25s
+    motion: circular
+    events:
+      - {t: 20, set: {atmosphere: fog}}
+      - {t: 25, set: {atmosphere: clear}}
+
+  S10: {desc: "straight, haze whole run", atmosphere: haze}
+
+  S11: {desc: "straight, gaussian noise sigma 20 (PS max)", noise_level: 1.0, noise_types: [gaussian]}
+  S12: {desc: "straight, salt&pepper 10%", noise_level: 1.0, noise_types: [saltpepper]}
+  S13: {desc: "straight, poisson shot noise gain 8", noise_level: 1.0, noise_types: [poisson]}
+
+  S14: {desc: "straight, camera jitter (vibration 1.0, ~+/-20 px)", camera_jitter: 1.0}
+  S15: {desc: "straight, platform motion linear", platform_motion: linear}
+
+  # Not part of the baseline set — example of a detector blackout event.
+  X01:
+    desc: straight, detector blackout 20s for 2s
+    events:
+      - {t: 20, blackout: 2.0}
+
+  # Step 3 T2 — wrong prediction: circular motion, 1.0 s detector blackout
+  # at t=15 s; during the gap the beacon curves away from the straight-line
+  # (Kalman/rate-coast) prediction. Score re-acq time, wrong locks and
+  # spiral_frames.
+  X02:
+    desc: circular, detector blackout 15s for 1s (wrong prediction)
+    motion: circular
+    events:
+      - {t: 15, blackout: 1.0}
+
+  # Step 3 T3 — the beacon REALLY leaves the camera view. Fast circular
+  # motion (omega 1.0 rad/s x 300 px radius = 300 px/s).
+  X03:
+    desc: fast circular, detector blackout 15s for 2.5s (beacon leaves view)
+    motion: circular
+    circular_omega: 1.0
+    events:
+      - {t: 15, blackout: 2.5}
+  X04:
+    desc: fast circular, dense fog 15-21s (beacon invisible 6 s)
+    motion: circular
+    circular_omega: 1.0
+    events:
+      - {t: 15, set: {atmosphere: dense_fog}}
+      - {t: 21, set: {atmosphere: clear}}
+
+  # Step 6a — new atmosphere effects, alone (strengths: config disturbance.rain / .low_light).
+  X05: {desc: "straight, rain whole run", atmosphere: rain}
+  X06: {desc: "straight, low light whole run", low_light: true}
+  # Step 6b-1 star safety for the relative brightness gate.
+  X07: {desc: "straight, low light + 3000 stars + 3 decoys in view", low_light: true,
+        num_stars: 3000, num_distractors: 3, decoys_in_view: true}
+  # Step 6b-1 follow-up: rain + camera jitter together (measure only).
+  X08: {desc: "straight, rain + camera jitter 1.0 (~+/-20 px)", atmosphere: rain,
+        camera_jitter: 1.0, duration_s: 20}
+
+  # Step 4 P1 — prediction quality: 1.0 s detector blackout at t=15 s for
+  # each motion model. Scored by pred_err_event_end_px (tracker's predicted
+  # position vs the true beacon on the last blackout frame) and
+  # event_recovery_s.
+  P1S01: {desc: "P1 straight, blackout 15s 1s",   motion: straight,   duration_s: 30, events: [{t: 15, blackout: 1.0}]}
+  P1S02: {desc: "P1 circular, blackout 15s 1s",   motion: circular,   duration_s: 30, events: [{t: 15, blackout: 1.0}]}
+  P1S03: {desc: "P1 figure-8, blackout 15s 1s",   motion: figure8,    duration_s: 30, events: [{t: 15, blackout: 1.0}]}
+  P1S04: {desc: "P1 random, blackout 15s 1s",     motion: random,     duration_s: 30, events: [{t: 15, blackout: 1.0}]}
+  P1S05: {desc: "P1 sinusoidal, blackout 15s 1s", motion: sinusoidal, duration_s: 30, events: [{t: 15, blackout: 1.0}]}
+
+  # Prompt 3: X09/X10 and C1-C7 were referenced by the task but not
+  # defined anywhere in the repo; defined here from their physical
+  # description BEFORE any code change of Prompt 3 (test scenarios only,
+  # never used for tuning).
+  X09: {desc: "clear, straight, 3 decoys in view", duration_s: 30, num_distractors: 3, decoys_in_view: true}
+  X10: {desc: "circular, 5 decoys in view + gaussian noise 0.5", duration_s: 30, motion: circular,
+        num_distractors: 5, decoys_in_view: true, noise_level: 0.5, noise_types: [gaussian]}
+  # Combined conditions.
+  C1: {desc: "haze + gaussian noise 0.5 + jitter 0.5", duration_s: 30, atmosphere: haze, noise_level: 0.5,
+       noise_types: [gaussian], camera_jitter: 0.5}
+  C2: {desc: "rain + salt&pepper 0.5", duration_s: 30, atmosphere: rain, noise_level: 0.5, noise_types: [saltpepper]}
+  C3: {desc: "low light + poisson 1.0 + jitter 0.5", duration_s: 30, low_light: true, noise_level: 1.0,
+       noise_types: [poisson], camera_jitter: 0.5}
+  C4: {desc: "turbulence 0.6 + scintillation 0.6, circular", duration_s: 30, motion: circular,
+       turbulence: 0.6, scintillation: 0.6}
+  C5: {desc: "fog 10-15s + jitter 0.5 + platform motion", duration_s: 30, camera_jitter: 0.5, platform_motion: linear,
+       events: [{t: 10, set: {atmosphere: fog}}, {t: 15, set: {atmosphere: clear}}]}
+  C6: {desc: "haze + 3 decoys in view + jerk 0.5, figure-8", duration_s: 30, motion: figure8, atmosphere: haze,
+       num_distractors: 3, decoys_in_view: true, jerk: 0.5}
+  C7: {desc: "rain + low light + jitter 0.5 + gaussian 0.3", duration_s: 30, atmosphere: rain, low_light: true,
+       camera_jitter: 0.5, noise_level: 0.3, noise_types: [gaussian]}
