@@ -25,3 +25,7 @@ test2_log.txt
 input_videos/
 data/
 output/
+
+# local documents and media (moved here during consolidation; not published)
+docs/_local/
+media/
