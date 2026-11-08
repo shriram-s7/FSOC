@@ -1,5 +1,5 @@
 """
-evaluation/gt_metrics.py — FSOC-PAT Simulator (SIH 2025, PS 26169, ISRO)
+evaluation/gt_metrics.py — FSOC-PAT Simulator (SIH 2026, PS 26169, ISRO)
 
 Ground-truth scoring functions shared by the headless test harness
 (harness/) and the live session report (evaluation/metrics.py). Ground
