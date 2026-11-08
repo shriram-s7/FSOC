@@ -1,6 +1,6 @@
 """
 FSOC-PAT Simulator — Dear PyGui Mission Control Station
-ISRO / Department of Space & SIH 2025 (PS 26169)
+ISRO / Department of Space & SIH 2026 (PS 26169)
 
 Aerospace Mission-Control Station organized into 7 structured operational stages:
   1. HOME / MISSION SETUP — Mission cards, staged wizard, target kinematics & launch briefing
@@ -1913,7 +1913,7 @@ class Dashboard:
         self._texture()
 
         dpg.create_viewport(
-            title='FSOC-PAT Mission Control Station | ISRO SIH 2025 PS 26169',
+            title='FSOC-PAT Mission Control Station | ISRO SIH 2026 PS 26169',
             width=WIN_W, height=WIN_H,
             min_width=1200, min_height=720,
             clear_color=BG_MAIN)

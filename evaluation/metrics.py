@@ -1,5 +1,5 @@
 """
-evaluation/metrics.py — FSOC-PAT Simulator (SIH 2025, PS 26169, ISRO)
+evaluation/metrics.py — FSOC-PAT Simulator (SIH 2026, PS 26169, ISRO)
 
 Pure data-accumulation layer for performance evaluation. Collects
 per-frame tracking metrics during a simulation or video-replay session

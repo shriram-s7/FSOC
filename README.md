@@ -8,7 +8,7 @@ An AI-assisted virtual camera tracking simulator for the **coarse alignment of m
 
 ## Overview
 
-Free-space optical links use very narrow beams, so before fine pointing can work, a terminal has to coarsely acquire the remote beacon and keep it inside its camera's field of view. This project, built for Smart India Hackathon problem statement **PS 26169** (ISRO / Department of Space), is a software testbed for that step: it renders a synthetic scene, runs detection, tracking and a servo loop against it, injects disturbances, and scores the run against the statement's thresholds. Ground truth is used for evaluation only, not for control (`tests/test_no_leak.py` checks this). It demonstrates *coarse alignment in simulation*, not a physical communication link.
+Free-space optical links use very narrow beams, so before fine pointing can work, a terminal has to coarsely acquire the remote beacon and keep it inside its camera's field of view. This project, built for **Smart India Hackathon 2026**, problem statement **PS 26169** (ISRO / Department of Space), is a software testbed for that step: it renders a synthetic scene, runs detection, tracking and a servo loop against it, injects disturbances, and scores the run against the statement's thresholds. Ground truth is used for evaluation only, not for control (`tests/test_no_leak.py` checks this). It demonstrates *coarse alignment in simulation*, not a physical communication link.
 
 ## Features
 
@@ -133,11 +133,10 @@ Observed while writing this README (Python 3.13, headless SDL): **57 tests run, 
 - Comparison is a recorded replay of three separate runs, not three concurrent real-time pipelines. AI and Hybrid share one CNN; results can tie, and the report does not force a winner.
 - The CNN is trained on synthetic beacons; its validation accuracy is patch accuracy, not mission accuracy.
 - Not implemented or deferred: a full tracking-dynamics visualisation, real-camera validation, and a clean-machine installer test. The official PS thresholds are applied as configured checks.
-- The Smart India Hackathon year is inconsistent in the repository: source headers say "SIH 2025", but the problem-statement number is in the same series as other 2026 statements. This README therefore cites only PS 26169.
 
 ## Credits
 
-FSOC-PAT Team (author field in `frontend/package.json`). Reference: problem statement 26169, "Development of an AI-Based Virtual Camera Tracking System for Coarse Alignment of Mobile Free Space Optical Communication Terminals".
+FSOC-PAT Team (author field in `frontend/package.json`); Smart India Hackathon 2026. Reference: problem statement 26169, "Development of an AI-Based Virtual Camera Tracking System for Coarse Alignment of Mobile Free Space Optical Communication Terminals".
 
 ## License
 

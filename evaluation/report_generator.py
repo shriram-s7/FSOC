@@ -1,5 +1,5 @@
 """
-evaluation/report_generator.py — FSOC-PAT Simulator (SIH 2025, PS 26169, ISRO)
+evaluation/report_generator.py — FSOC-PAT Simulator (SIH 2026, PS 26169, ISRO)
 
 Generates a professional PDF performance-certification report from a
 completed MetricsAccumulator, using reportlab only (no matplotlib).
@@ -114,7 +114,7 @@ class ReportGenerator:
 
         header_table = Table(
             [[Paragraph('FSOC-PAT Simulator — Performance Report', title_style)],
-             [Paragraph('PS 26169 &middot; ISRO / Department of Space &middot; SIH 2025', subtitle_style)],
+             [Paragraph('PS 26169 &middot; ISRO / Department of Space &middot; SIH 2026', subtitle_style)],
              [Paragraph(f"Session: {summary['session_id']} &nbsp;|&nbsp; "
                         f"Mode: {mode_label} &nbsp;|&nbsp; "
                         f"Tracking mode: {summary.get('detector_mode', 'Hybrid')} &nbsp;|&nbsp; "

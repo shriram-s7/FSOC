@@ -242,7 +242,7 @@ The PDF metrics table shows `correct_lock_pct` when GT exists, otherwise `lock_r
 | Processing speed | `mean_fps ≥ 20.0` | `≥ 20 FPS` labelled "Processing Speed" | **end-to-end loop `mean_fps`, not `processing_fps`** |
 | Overall | all five | | Video without GT: requirements set `None`, `overall_pass=None`, `not_scored=True` |
 
-Provenance: the thresholds appear only in code/comments/UI text attributed to "PS 26169" (SIH 2025, ISRO). No official requirement document exists in the repository. Legacy `ui/dashboard.py` text says "Tracking Error <= 10.0 px RMS" while the evaluator uses the mean. Treat these as **configured PS checks**; the reference images' limits (µrad pointing, 10 s acquisition, events/5 min, uptime, 50 ms latency) are **not** the application's requirements.
+Provenance: the thresholds appear only in code/comments/UI text attributed to "PS 26169" (SIH 2026, ISRO). No official requirement document exists in the repository. Legacy `ui/dashboard.py` text says "Tracking Error <= 10.0 px RMS" while the evaluator uses the mean. Treat these as **configured PS checks**; the reference images' limits (µrad pointing, 10 s acquisition, events/5 min, uptime, 50 ms latency) are **not** the application's requirements.
 
 The browser Benchmark computes its own PASS: `acq_time(A) ≤ 2.0 ∧ mean(sampled track_error_px while LOCKED) ≤ 10 ∧ (LOST samples ÷ samples) < 5 %` from 1 Hz samples — a second, inconsistent evaluator.
 

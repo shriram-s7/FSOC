@@ -1,5 +1,5 @@
 """
-evaluation/logger.py — FSOC-PAT Simulator (SIH 2025, PS 26169, ISRO)
+evaluation/logger.py — FSOC-PAT Simulator (SIH 2026, PS 26169, ISRO)
 
 CSV export for a completed evaluation session. Writes a per-frame log
 and a summary log, both derived from a MetricsAccumulator, into the
